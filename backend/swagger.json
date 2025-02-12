@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Star Wars Explorer API",
+    "version": "1.0.0",
+    "description": "API para explorar la información de Star Wars, registrar usuarios y gestionar favoritos."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Registrar un usuario",
+        "description": "Registra un nuevo usuario en el sistema.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuario registrado con éxito." },
+          "400": { "description": "El usuario ya existe o faltan datos." },
+          "500": { "description": "Error al registrar usuario." }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Iniciar sesión",
+        "description": "Permite a los usuarios autenticarse en el sistema.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login exitoso, retorna un token." },
+          "400": { "description": "Usuario no encontrado o contraseña incorrecta." },
+          "500": { "description": "Error en login." }
+        }
+      }
+    },
+    "/favorites": {
+      "get": {
+        "summary": "Obtener favoritos del usuario",
+        "description": "Devuelve la lista de favoritos del usuario autenticado.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de favoritos obtenida correctamente." },
+          "401": { "description": "Acceso denegado, token no proporcionado." }
+        }
+      },
+      "post": {
+        "summary": "Guardar un favorito",
+        "description": "Permite al usuario guardar un favorito en su cuenta.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "details": { "type": "object" }
+                },
+                "required": ["name", "type", "details"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Favorito guardado con éxito." },
+          "400": { "description": "El favorito ya está guardado." },
+          "401": { "description": "Acceso denegado." },
+          "500": { "description": "Error al guardar favorito." }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Buscar en SWAPI",
+        "description": "Permite buscar personajes, películas, naves, etc.",
+        "parameters": [
+          { "name": "type", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "name", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Resultados obtenidos con éxito." },
+          "400": { "description": "Parámetros faltantes." },
+          "500": { "description": "Error en la búsqueda." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
