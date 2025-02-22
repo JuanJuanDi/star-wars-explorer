@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import Register from './pages/Register';
 // import Favorites from './pages/Favorites';
 import ProtectedRoute from './components/ProtectedRoute';
-import Particles from './components/Particles/Particles'; // Importamos el fondo animado
+import Particles from './components/Particles/Particles';
+import TextPressure from './components/TextPressure/TextPressure';
 
 function App() {
   return (
@@ -19,6 +20,23 @@ function App() {
         alphaParticles={false}
         disableRotation={false}
       />
+      <div
+        style={{
+          position: 'absolute',
+          top: '10%',
+          width: '100%',
+          textAlign: 'center',
+        }}
+      >
+        <TextPressure
+          text="STARWARSEXPLORE"
+          stroke={true}
+          textColor="#ffffff"
+          strokeColor="#ffcc00"
+          minFontSize={350}
+        />
+      </div>
+
       <Router>
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}

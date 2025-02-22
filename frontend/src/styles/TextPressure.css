@@ -1,0 +1,74 @@
+@font-face {
+  font-family: "Compressa VF";
+  src: url("https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2");
+  font-style: normal;
+}
+
+.text-pressure-title {
+  color: white;
+  text-align: center;
+  font-family: "Compressa VF";
+  text-transform: uppercase;
+  font-size: 36px;
+  font-weight: 100;
+  user-select: none;
+  white-space: nowrap;
+  transition: text-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.text-pressure-title:hover {
+  text-shadow: 0px 0px 15px #ffcc00;
+}
+
+.text-pressure-title span {
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.text-pressure-title span:hover {
+  transform: scale(1.1);
+}
+
+¿.stroke span {
+  position: relative;
+  color: white;
+}
+
+.stroke span::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: transparent;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: #ffcc00;
+}
+
+@keyframes fadeInUpZoom {
+  0% {
+    opacity: 0;
+    transform: translateY(500px) scale(0.8); 
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0px 0px 80px #ffcc00; 
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1); 
+    text-shadow: none;
+  }
+}
+
+.text-pressure-title {
+  color: white;
+  text-align: center;
+  font-family: "Compressa VF";
+  text-transform: uppercase;
+  font-size: 36px;
+  font-weight: 100;
+  user-select: none;
+  white-space: nowrap;
+  
+  animation: fadeInUpZoom 1.5s ease-out;
+}
