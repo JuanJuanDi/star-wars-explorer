@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
-import "../styles/Particles.css";
+import React, { useEffect, useRef } from 'react';
+import { Renderer, Camera, Geometry, Program, Mesh } from 'ogl';
+
+import '../styles/Particles.css';
 
 interface ParticlesProps {
   particleCount?: number;
@@ -17,12 +18,15 @@ interface ParticlesProps {
   className?: string;
 }
 
-const defaultColors: string[] = ["#ffffff", "#ffffff", "#ffffff"];
+const defaultColors: string[] = ['#ffffff', '#ffffff', '#ffffff'];
 
 const hexToRgb = (hex: string): [number, number, number] => {
-  hex = hex.replace(/^#/, "");
+  hex = hex.replace(/^#/, '');
   if (hex.length === 3) {
-    hex = hex.split("").map((c) => c + c).join("");
+    hex = hex
+      .split('')
+      .map((c) => c + c)
+      .join('');
   }
   const int = parseInt(hex, 16);
   const r = ((int >> 16) & 255) / 255;
@@ -91,7 +95,7 @@ const fragment = /* glsl */ `
 `;
 
 const Particles: React.FC<ParticlesProps> = ({
-  particleCount = 20000,
+  particleCount = 200,
   particleSpread = 10,
   speed = 0.1,
   particleColors,
@@ -111,44 +115,43 @@ const Particles: React.FC<ParticlesProps> = ({
     const container = containerRef.current;
     if (!container) return;
   
-    const renderer = new Renderer({ depth: false, alpha: false }); 
+    const renderer = new Renderer({ depth: false, alpha: true });
     const gl = renderer.gl;
     container.appendChild(gl.canvas);
     gl.clearColor(0, 0, 0, 1);
-  
+
     const camera = new Camera(gl, { fov: 15 });
     camera.position.set(0, 0, cameraDistance);
-  
+
     const resize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
       renderer.setSize(width, height);
-      gl.canvas.style.width = "100vw";
-      gl.canvas.style.height = "100vh";
-      camera.perspective({ aspect: width / height });
+      camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
     };
-  
-    window.addEventListener("resize", resize, false);
+    window.addEventListener('resize', resize, false);
     resize();
-  
-  
+
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
       mouseRef.current = { x, y };
     };
-  
+
     if (moveParticlesOnHover) {
-      container.addEventListener("mousemove", handleMouseMove);
+      container.addEventListener('mousemove', handleMouseMove);
     }
-  
+
     const count = particleCount;
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count * 4);
     const colors = new Float32Array(count * 3);
-    const palette = particleColors && particleColors.length > 0 ? particleColors : defaultColors;
-  
+    const palette =
+      particleColors && particleColors.length > 0
+        ? particleColors
+        : defaultColors;
+
     for (let i = 0; i < count; i++) {
       let x: number, y: number, z: number, len: number;
       do {
@@ -159,53 +162,20 @@ const Particles: React.FC<ParticlesProps> = ({
       } while (len > 1 || len === 0);
       const r = Math.cbrt(Math.random());
       positions.set([x * r, y * r, z * r], i * 3);
-      randoms.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
+      randoms.set(
+        [Math.random(), Math.random(), Math.random(), Math.random()],
+        i * 4
+      );
       const col = hexToRgb(palette[Math.floor(Math.random() * palette.length)]);
       colors.set(col, i * 3);
     }
-  
-    //Estrela fugaz
-    const shootingStars: HTMLDivElement[] = [];
-
-    const createShootingStar = () => {
-      const star = document.createElement("div");
-      star.className = "shooting-star";
-      document.body.appendChild(star);
-      
-      // Posición inicial aleatoria
-      const startX = Math.random() * window.innerWidth;
-      const startY = Math.random() * window.innerHeight * 0.5; // Solo en la parte superior
-      
-      star.style.left = `${startX}px`;
-      star.style.top = `${startY}px`;
-    
-      // Animación de la estrella fugaz
-      setTimeout(() => {
-        star.style.transform = `translate(${Math.random() * 300 - 150}px, ${Math.random() * 500 + 300}px)`;
-        star.style.opacity = "0";
-      }, 100);
-    
-      setTimeout(() => {
-        document.body.removeChild(star);
-        shootingStars.splice(shootingStars.indexOf(star), 1);
-      }, 2000);
-    };
-    
-    // Generar una estrella fugaz cada 3-6 segundos
-    setInterval(() => {
-      if (shootingStars.length < 3) {
-        createShootingStar();
-      }
-    }, Math.random() * 3000 + 3000);
-    
-    //Fin estrella fugaz
 
     const geometry = new Geometry(gl, {
       position: { size: 3, data: positions },
       random: { size: 4, data: randoms },
       color: { size: 3, data: colors },
     });
-  
+
     const program = new Program(gl, {
       vertex,
       fragment,
@@ -219,21 +189,21 @@ const Particles: React.FC<ParticlesProps> = ({
       transparent: true,
       depthTest: false,
     });
-  
+
     const particles = new Mesh(gl, { mode: gl.POINTS, geometry, program });
-  
+
     let animationFrameId: number;
     let lastTime = performance.now();
     let elapsed = 0;
-  
+
     const update = (t: number) => {
       animationFrameId = requestAnimationFrame(update);
       const delta = t - lastTime;
       lastTime = t;
       elapsed += delta * speed;
-  
+
       program.uniforms.uTime.value = elapsed * 0.001;
-  
+
       if (moveParticlesOnHover) {
         particles.position.x = -mouseRef.current.x * particleHoverFactor;
         particles.position.y = -mouseRef.current.y * particleHoverFactor;
@@ -241,21 +211,22 @@ const Particles: React.FC<ParticlesProps> = ({
         particles.position.x = 0;
         particles.position.y = 0;
       }
-  
+
       if (!disableRotation) {
-        particles.rotation.x = Math.sin(elapsed * 0.0002) * 0.2;
-        particles.rotation.y = Math.cos(elapsed * 0.0003) * 0.25;
-        particles.rotation.z += 0.005 * speed;
+        particles.rotation.x = Math.sin(elapsed * 0.0002) * 0.1;
+        particles.rotation.y = Math.cos(elapsed * 0.0005) * 0.15;
+        particles.rotation.z += 0.01 * speed;
       }
-        renderer.render({ scene: particles, camera });
+
+      renderer.render({ scene: particles, camera });
     };
-  
+
     animationFrameId = requestAnimationFrame(update);
-  
+
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener('resize', resize);
       if (moveParticlesOnHover) {
-        container.removeEventListener("mousemove", handleMouseMove);
+        container.removeEventListener('mousemove', handleMouseMove);
       }
       cancelAnimationFrame(animationFrameId);
       if (container.contains(gl.canvas)) {
@@ -266,22 +237,18 @@ const Particles: React.FC<ParticlesProps> = ({
     particleCount,
     particleSpread,
     speed,
-    moveParticlesOnHover,
-    particleHoverFactor,
-    alphaParticles,
-    particleBaseSize,
-    sizeRandomness,
-    cameraDistance,
     disableRotation,
     particleColors,
+    alphaParticles,
+    cameraDistance,
+    moveParticlesOnHover,
+    particleBaseSize,
+    particleHoverFactor,
+    sizeRandomness
   ]);
-  
 
   return (
-    <div
-      ref={containerRef}
-      className={`particles-container ${className}`}
-    />
+    <div ref={containerRef} className={`particles-container ${className}`} />
   );
 };
 
