@@ -13,6 +13,8 @@ const morgan = require('morgan');
 const User = require('./models/User');
 const Favorite = require('./models/Favorite');
 
+const cookieParser = require('cookie-parser');
+
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +27,8 @@ const SECRET_KEY = process.env.SECRET_KEY;
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(cookieParser());
+
 
 // 📌 Cargar documentación de Swagger
 const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger.json'), 'utf8'));
@@ -94,11 +98,41 @@ app.post('/api/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user._id.toString() }, SECRET_KEY, { expiresIn: '1h' });
 
-    res.json({ mensaje: 'Login exitoso!', token });
+    // Guardar el token en una cookie segura
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Solo en HTTPS en producción
+      sameSite: 'Strict',
+      maxAge: 60 * 60 * 1000, // 1 hora
+    });
+
+    res.json({ mensaje: 'Login exitoso!' });
   } catch (error) {
     res.status(500).json({ error: 'Error en login' });
   }
 });
+
+// 📌 Verificar si esta autenticado el usuario
+app.get('/api/auth', (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: 'No autenticado' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    res.json({ autenticado: true, userId: decoded.userId });
+  } catch (error) {
+    res.status(401).json({ error: 'Token inválido' });
+  }
+});
+
+// 📌 Cerrar sesión
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ mensaje: 'Logout exitoso' });
+});
+
 
 // ===================== ⭐ FAVORITOS =====================
 
