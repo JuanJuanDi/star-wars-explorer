@@ -1,1 +1,15 @@
+/* Oculta las barras de scroll en navegadores webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  display: none;
+}
 
+/* Para Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* Para asegurar que no haya overflow */
+body {
+  margin: 0;
+  overflow: hidden;
+}
