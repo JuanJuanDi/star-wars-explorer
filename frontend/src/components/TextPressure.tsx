@@ -17,6 +17,7 @@ interface TextPressureProps {
   strokeColor?: string;
   className?: string;
   minFontSize?: number;
+  fontWidth?: number;
 }
 
 const TextPressure: React.FC<TextPressureProps> = ({
@@ -236,6 +237,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
   style={{
     display: "inline-block",
     color: stroke ? undefined : textColor,
+    letterSpacing: "50px",
+
   }}
 >
   {char}
