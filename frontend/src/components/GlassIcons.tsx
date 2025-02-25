@@ -8,6 +8,7 @@ export interface GlassIconsItem {
   label: string;
   customClass?: string;
   url?: string; 
+  src?: string; 
 }
 
 export interface GlassIconsProps {
@@ -35,7 +36,11 @@ const GlassIcons: React.FC<GlassIconsProps> = ({ items, className }) => {
   return (
     <div className={`icon-btns ${className || ""}`}>
       {items.map((item, index) => (
-        <Link key={index} to={item.url || "#"} style={{ textDecoration: 'none' }}>
+        <Link
+          key={index}
+          to={item.url || item.src || "#"}
+          style={{ textDecoration: "none" }}
+        >
           <button
             type="button"
             className={`icon-btn ${item.customClass || ""}`}

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Character } from "./pages/Character";
 import { Planet } from "./pages/Planet";
@@ -6,7 +6,6 @@ import { Film } from "./pages/Film";
 import { StarshipVehicles } from "./pages/StarshipVehicles";
 
 import Particles from "./components/Particles";
-import TextPressure from "./components/TextPressure";
 import GlassIcons from "./components/GlassIcons";
 
 function App() {
@@ -21,7 +20,7 @@ function App() {
       ),
       color: "#2E5DAC",
       label: "Character",
-      src: "./pages/Character.tsx",
+      src: "/character",
     },
     {
       icon: (
@@ -33,7 +32,7 @@ function App() {
       ),
       color: "#3AB34A",
       label: "Planet",
-      src: "./pages/Planet.tsx",
+      src: "/planet",
     },
     {
       icon: (
@@ -45,7 +44,7 @@ function App() {
       ),
       color: "#FF0000",
       label: "Starship/Vehicles",
-      src: "./pages/StarshipVehicles.tsx",
+      src: "/starship",
     },
     {
       icon: (
@@ -57,7 +56,7 @@ function App() {
       ),
       color: "#9400D3",
       label: "Film",
-      src: "./pages/Film.tsx",
+      src: "/film",
     },
     {
       icon: (
@@ -69,7 +68,7 @@ function App() {
       ),
       color: "#FFE81F",
       label: "Favorite",
-      src: "./pages/Favorite.tsx",
+      src: "/favorite",
     },
   ];
 
@@ -97,34 +96,6 @@ function App() {
         disableRotation={false}
       />
 
-      {/* Contenedor para los textos */}
-      <div style={{ textAlign: "center", flexShrink: 0 }}>
-        <TextPressure
-          text="STAR WARS"
-          flex
-          alpha={false}
-          stroke
-          width
-          weight
-          italic
-          minFontSize={200}
-          textColor="#FFD700"
-          strokeColor="#000000"
-        />
-        <TextPressure
-          text="EXPLORER"
-          flex
-          alpha={false}
-          stroke
-          width
-          weight
-          italic
-          minFontSize={200}
-          textColor="#FFD700"
-          strokeColor="#000000"
-        />
-      </div>
-
       {/* Contenedor principal para las rutas */}
       <div
         style={{
@@ -135,12 +106,13 @@ function App() {
         }}
       >
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate replace to="/home" />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/character" element={<Character />} />
           <Route path="/planet" element={<Planet />} />
-          <Route path="/starship-vehicles" element={<StarshipVehicles />} />
+          <Route path="/starship" element={<StarshipVehicles />} />
           <Route path="/film" element={<Film />} />
-          {/* más rutas  */}
+          {/* Agrega más rutas según sea necesario */}
         </Routes>
       </div>
 
