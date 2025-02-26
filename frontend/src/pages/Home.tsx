@@ -1,4 +1,3 @@
-import React from "react";
 import TextPressure from "../components/TextPressure";
 
 export const Home = () => {
@@ -28,7 +27,6 @@ export const Home = () => {
         textColor="#FFD700"
         strokeColor="#000000"
       />
-      {/* Aquí puedes agregar más contenido exclusivo del Home */}
     </div>
   );
 };
